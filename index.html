@@ -61,7 +61,7 @@
             width: 100%;
             border-radius: 12px;
             margin-top: 15px;
-	transform: rotate(180deg);
+            transform: rotate(180deg);
         }
 
         .resultat h2 {
@@ -175,11 +175,6 @@
                 <span class="valeur" id="confiance">---</span>
             </div>
 
-            <div class="ligne">
-                <span>Personnes détectées</span>
-                <span class="valeur" id="nombre">---</span>
-            </div>
-
             <div id="statut">
                 EN ATTENTE
             </div>
@@ -205,18 +200,12 @@ async function actualiser() {
 
     try {
 
-        // ----------------------------
         // IMAGE
-        // ----------------------------
-
         document.getElementById("camera").src =
             CLOUDINARY + "?t=" + Date.now();
 
 
-        // ----------------------------
         // RESULTAT PYTHON
-        // ----------------------------
-
         const response = await fetch(
             "resultat.json?t=" + Date.now()
         );
@@ -236,14 +225,7 @@ async function actualiser() {
             data.personne ?? "---";
 
 
-        document.getElementById("nombre").textContent =
-            data.nombre_personnes ?? 0;
-
-
-        // ----------------------------
         // SIMILARITE
-        // ----------------------------
-
         if (data.similarite !== null) {
 
             document.getElementById("similarite").textContent =
@@ -256,10 +238,7 @@ async function actualiser() {
         }
 
 
-        // ----------------------------
         // CONFIANCE
-        // ----------------------------
-
         if (data.confiance !== null) {
 
             document.getElementById("confiance").textContent =
@@ -272,10 +251,7 @@ async function actualiser() {
         }
 
 
-        // ----------------------------
         // STATUT
-        // ----------------------------
-
         const statut =
             document.getElementById("statut");
 
@@ -311,10 +287,7 @@ async function actualiser() {
         }
 
 
-        // ----------------------------
         // DATE
-        // ----------------------------
-
         const date =
             new Date(data.timestamp);
 
@@ -336,11 +309,11 @@ async function actualiser() {
 }
 
 
-// première récupération
+// Première récupération
 actualiser();
 
 
-// actualisation toutes les 2 secondes
+// Actualisation toutes les 2 secondes
 setInterval(actualiser, 2000);
 
 </script>
