@@ -1,10 +1,10 @@
 {
     "humain": true,
     "visage": true,
-    "personne": "Arthur",
-    "statut": "AUTORISE",
-    "similarite": 0.6308926343917847,
+    "personne": "INCONNUE",
+    "statut": "NON_AUTORISE",
+    "similarite": 0.03983013704419136,
     "confiance": null,
     "nombre_personnes": 1,
-    "timestamp": "2026-10-02T13:05:43.855332"
+    "timestamp": "2026-10-02T13:07:17.542347"
 }
