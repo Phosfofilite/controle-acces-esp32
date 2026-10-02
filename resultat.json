@@ -1,10 +1,10 @@
 {
     "humain": true,
-    "visage": true,
-    "personne": "INCONNUE",
-    "statut": "NON_AUTORISE",
-    "similarite": 0.03983013704419136,
-    "confiance": null,
-    "nombre_personnes": 1,
-    "timestamp": "2026-10-02T13:07:17.542347"
+    "visage": false,
+    "personne": null,
+    "statut": "NON_IDENTIFIE",
+    "similarite": null,
+    "confiance": 0.4845685660839081,
+    "nombre_personnes": 2,
+    "timestamp": "2026-10-02T14:28:56.407532"
 }
