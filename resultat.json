@@ -1,0 +1,10 @@
+{
+    "humain": true,
+    "visage": true,
+    "personne": "Arthur",
+    "statut": "AUTORISE",
+    "similarite": 0.6662352681159973,
+    "confiance": null,
+    "nombre_personnes": 1,
+    "timestamp": "2026-10-02T12:29:18.397826"
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contrôle d'accès ESP32</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: white;
+        }
+
+        header {
+            padding: 22px 40px;
+            background: #111827;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #263244;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .online {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: #111827;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #263244;
+        }
+
+        .camera img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 15px;
+	transform: rotate(180deg);
+        }
+
+        .resultat h2 {
+            margin-top: 0;
+        }
+
+        .ligne {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #263244;
+        }
+
+        .valeur {
+            font-weight: bold;
+        }
+
+        #statut {
+            margin-top: 25px;
+            padding: 18px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .autorise {
+            background: #14532d;
+            color: #86efac;
+        }
+
+        .refuse {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .inconnu {
+            background: #78350f;
+            color: #fde68a;
+        }
+
+        .vide {
+            background: #374151;
+            color: #d1d5db;
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        @media(max-width: 800px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔐 Contrôle d'accès ESP32</h1>
+    <div class="online">● SYSTÈME ACTIF</div>
+</header>
+
+<div class="container">
+
+    <div class="dashboard">
+
+        <div class="card camera">
+
+            <h2>Caméra</h2>
+
+            <img
+                id="camera"
+                src="https://res.cloudinary.com/lg5zppah/image/upload/esp32_latest.jpg"
+                alt="ESP32 CAM"
+            >
+
+        </div>
+
+        <div class="card resultat">
+
+            <h2>Dernière analyse</h2>
+
+            <div class="ligne">
+                <span>Humain</span>
+                <span class="valeur" id="humain">---</span>
+            </div>
+
+            <div class="ligne">
+                <span>Visage</span>
+                <span class="valeur" id="visage">---</span>
+            </div>
+
+            <div class="ligne">
+                <span>Identité</span>
+                <span class="valeur" id="personne">---</span>
+            </div>
+
+            <div class="ligne">
+                <span>Similarité</span>
+                <span class="valeur" id="similarite">---</span>
+            </div>
+
+            <div class="ligne">
+                <span>Confiance IA</span>
+                <span class="valeur" id="confiance">---</span>
+            </div>
+
+            <div class="ligne">
+                <span>Personnes détectées</span>
+                <span class="valeur" id="nombre">---</span>
+            </div>
+
+            <div id="statut">
+                EN ATTENTE
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer" id="heure">
+        En attente d'une analyse...
+    </div>
+
+</div>
+
+
+<script>
+
+const CLOUDINARY =
+"https://res.cloudinary.com/lg5zppah/image/upload/esp32_latest.jpg";
+
+
+async function actualiser() {
+
+    try {
+
+        // ----------------------------
+        // IMAGE
+        // ----------------------------
+
+        document.getElementById("camera").src =
+            CLOUDINARY + "?t=" + Date.now();
+
+
+        // ----------------------------
+        // RESULTAT PYTHON
+        // ----------------------------
+
+        const response = await fetch(
+            "resultat.json?t=" + Date.now()
+        );
+
+        const data = await response.json();
+
+
+        document.getElementById("humain").textContent =
+            data.humain ? "OUI" : "NON";
+
+
+        document.getElementById("visage").textContent =
+            data.visage ? "TROUVÉ" : "NON";
+
+
+        document.getElementById("personne").textContent =
+            data.personne ?? "---";
+
+
+        document.getElementById("nombre").textContent =
+            data.nombre_personnes ?? 0;
+
+
+        // ----------------------------
+        // SIMILARITE
+        // ----------------------------
+
+        if (data.similarite !== null) {
+
+            document.getElementById("similarite").textContent =
+                (data.similarite * 100).toFixed(1) + " %";
+
+        } else {
+
+            document.getElementById("similarite").textContent =
+                "---";
+        }
+
+
+        // ----------------------------
+        // CONFIANCE
+        // ----------------------------
+
+        if (data.confiance !== null) {
+
+            document.getElementById("confiance").textContent =
+                (data.confiance * 100).toFixed(1) + " %";
+
+        } else {
+
+            document.getElementById("confiance").textContent =
+                "---";
+        }
+
+
+        // ----------------------------
+        // STATUT
+        // ----------------------------
+
+        const statut =
+            document.getElementById("statut");
+
+        statut.className = "";
+
+
+        if (data.statut === "AUTORISE") {
+
+            statut.textContent = "✓ ACCÈS AUTORISÉ";
+            statut.classList.add("autorise");
+
+        }
+
+        else if (data.statut === "NON_AUTORISE") {
+
+            statut.textContent = "✕ ACCÈS REFUSÉ";
+            statut.classList.add("refuse");
+
+        }
+
+        else if (data.statut === "NON_IDENTIFIE") {
+
+            statut.textContent = "⚠ HUMAIN NON IDENTIFIÉ";
+            statut.classList.add("inconnu");
+
+        }
+
+        else {
+
+            statut.textContent = "AUCUN HUMAIN";
+            statut.classList.add("vide");
+
+        }
+
+
+        // ----------------------------
+        // DATE
+        // ----------------------------
+
+        const date =
+            new Date(data.timestamp);
+
+        document.getElementById("heure").textContent =
+            "Dernière analyse : "
+            + date.toLocaleString("fr-FR");
+
+    }
+
+    catch (erreur) {
+
+        console.error(
+            "Erreur actualisation :",
+            erreur
+        );
+
+    }
+
+}
+
+
+// première récupération
+actualiser();
+
+
+// actualisation toutes les 2 secondes
+setInterval(actualiser, 2000);
+
+</script>
+
+</body>
+</html>
